@@ -1,0 +1,20 @@
+{
+  "name": "CompuChain",
+  "version": "1.0.0",
+  "description": "<!-- COMPUCHAIN-->",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vnkbrand/CompuChain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vnkbrand/CompuChain/issues"
+  },
+  "homepage": "https://github.com/vnkbrand/CompuChain#readme"
+}

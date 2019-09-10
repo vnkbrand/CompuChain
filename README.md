@@ -1,10 +1,10 @@
-<!-- COMPUCHAIN-->
+# COMPUCHAIN
 
 A complete Proof-of-Stake blockchain.
 
 A fully-functional decentralised computer that is based on Ethereum's architecture.
 
-The scope of this project includes:
+## The scope of this project includes:
 
 1. The language for smart contracts.
 2. The development and implementation of the blockchain.
@@ -14,16 +14,13 @@ The scope of this project includes:
 
 All of these allow for a fully-functional decentralised computer.
 
-<!-- Ethereum High Level -->
+## Ethereum - High-Level
+
 ETH is its own computer, utilsing all machines on its network using its blockchain.
 
 Uses the blockchain to store transactional data. These are transactions of state and allows all computers to sync.
 
-<!-- Smart Contract Language -->
-
-Build the language at: https://repl.it/@DavidJoseph3/lightning-smart-contract
-
-<!-- Foundation -->
+# SMART CONTRACT LANGUAGE
 
 const STOP = 'STOP';
 const ADD = 'ADD';
@@ -79,7 +76,7 @@ OUTPUT => 5
 
 *This is a working interpreter and is the foundation for a working smart contract language.
 
-<!-- Adding MUL & DIV -->
+# ADDING MUL & DIV
 
 const STOP = 'STOP';
 const ADD = 'ADD';
@@ -156,19 +153,132 @@ code = [PUSH, 2, PUSH, 3, DIV, STOP];
 result = new Interpreter().runCode(code);
 console.log('Result of 3 DIV 2:', result);
 
-<!-- Smart Contracts Language using Ethereum Documentation -->
+**********************************************
 
-1. White Paper - high-level overview of Ethereum. 
-2. Yellow Paper - more advanced. Source of a lot of the implementation details for the code in this project.
-3. Beige Paper - translation of the yellow paper to make it more digestible.
+# ADDING JEST TEST
 
-<!-- Beigepaper -->
+1. Initialise a skeleton JS project
 
-Utilise:
-1. Smartchain opcodes
-- Mathematics (STOP, ADD...)
-- Comparisons (LT, GT...)
-- Moving (JUMP, JUMPI) - loops
+npm init -y
+
+2. Install Jest module
+
+npm i jest --save
+
+3. Amend package.json file
+
+"test": "jest --watchAll"
+
+4. Create test file
+
+index.test.js
+
+ Methodology of Testing
+
+ Jest uses:
+
+ 1. describe() - takes 2 arguments.
+ a. A string that describes a set of tests that the describe block will contain
+ b. A callback function that contains the actual test
+
+ The body of the callback function contains further testing blocks - further describe functions
+
+## One Suite of Tests
+
+describe('Interpreter', () => {
+  describe('runCode()', () => {
+    describe('and the code includes the ADD', () => {
+      it('adds two values', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, ADD, STOP])
+        ).toEqual(5);
+      });
+    });
+
+    describe('and the code includes the SUB', () => {
+      it('subtracts one value from another', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, SUB, STOP])
+        ).toEqual(1);
+      });
+    });
+
+    describe('and the code includes the MUL', () => {
+      it('multiplies two values', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, MUL, STOP])
+        ).toEqual(6);
+      });
+    });
+
+    describe('and the code includes the DIV', () => {
+      it('divides one value by another', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, DIV, STOP])
+        ).toEqual(1.5);
+      });
+    });
+
+    describe('and the code includes LT', () => {
+      it('checks if one value is less than another', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, LT, STOP])
+        ).toEqual(0);
+      });
+    });
+
+    describe('and the code includes GT', () => {
+      it('if one value is greater than another', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, GT, STOP])
+        ).toEqual(1);
+      });
+    });
+
+    describe('and the code includes EQ', () => {
+      it('if one value is equal to another', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 2, PUSH, 3, EQ, STOP])
+        ).toEqual(0);
+      });
+    });
+
+    describe('and the code includes AND', () => {
+      it('ands two conditions', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 1, PUSH, 0, AND, STOP])
+        ).toEqual(0);
+      });
+    });
+
+    describe('and the code includes OR', () => {
+      it('ors two conditions', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 1, PUSH, 0, OR, STOP])
+        ).toEqual(1);
+      });
+    });
+
+    describe('and the code includes JUMP', () => {
+      it('jumps to a detination', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 6, JUMP, PUSH, 0, JUMP, PUSH, 'jump successful', STOP])
+        ).toEqual('jump successful');
+      });
+    });
+
+    describe('and the code includes JUMPI', () => {
+      it('jumps to a destination', () => {
+        expect(
+          new Interpreter().runCode([PUSH, 8, PUSH, 1, JUMPI, PUSH, 0, JUMP, PUSH, 'jump successful', STOP])
+        ).toEqual('jump successful');
+      });
+    });
+  });
+});
+
+# DEVELOPING THE BLOCKCHAIN
+
 
 
 
