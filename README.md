@@ -279,6 +279,56 @@ describe('Interpreter', () => {
 
 # DEVELOPING THE BLOCKCHAIN
 
+1. Creating a blockchain through an implementation of an array
+
+  class Blockchain {
+    constructor() {
+      this.chain = [];
+    }
+  }
+
+2. Create a database structure to represent blocks - block.js
+
+  The Block consists of:
+    - The blockHeaders
+    - transaction series
+
+3. Create the mineBlock function
+  - To add a block to the chain
+
+4. Create the hard-codes genesis block in the root - config.js
+
+5. Setup the mineBlock functionality - util/index.js
+- Add the POW functionality
+- POW requires miners to solve a puzzle to mine blocks
+- POW difficulty, the puzzle can be harder/easier to find
+- Blocks added on time-based method
+- If it takes a miner a long time to add a block, the difficulty is decreased.
+- POW ensures the blocks are added at a steady rate.
+- Miners sync their chains by adding the longest chain by default.
+- To avoid fraudulent chains - it is expensive to add verified, long chains.
+
+6. Create sortCharacters function for large objects
+
+7. Create Hashing function
+
+*Hashing and Keccak256 Hash
+- generates a unique output for every unique input
+
+*Keccak256
+- 256 bits uses for the hash output - in binary
+- But we see strings of 64 char's in hexidecimal form
+
+*Install:
+npm i js-sha3 --save
+
+8. POW/Ethereum Algorithm
+  a. Calculate a block target hash based on last block's difficulty value. The higher the difficulty, the smaller the hash value.
+
+  b. Find a hash (underTargetHash) that is based on the current block that is lower than the block target hash. 
+     The underTargetHash consists of all the fields in the header for the new block {timestamp, number, beneficiary, difficulty, nonce (allows miners inifite retries in generating a valid underTargerHash )}. The nonce can be changed through a loop in order to find the correct combination of a nonce value and blockHeaders that meets the difficulty requirement.
+  
+  *Ethereum Directed Acyclic Graph (EDAG) maintains the above in Ethereum's network.
 
 
 
