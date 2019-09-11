@@ -330,5 +330,36 @@ npm i js-sha3 --save
   
   *Ethereum Directed Acyclic Graph (EDAG) maintains the above in Ethereum's network.
 
+9. Mining Functionality - block.js
+
+*In block.js
+ 
+ a. Combine header = keccakHash(truncatedBlockHeaders) & nonce value to calculate the actual hash that tries to meet the difficulty requirement.
+ b. If the hash found falls under this target, then the block is VALID.
+ c. The block is then created, based on the blockHeaders and the nonce value.
+
+ const underTargetHash = keccakHash(header + nonce);
+
+ 10. Difficulty Settings
+
+ Functionality is based on looking at the time difference between the new, mined block and the last block and comparing it against the mine rate value.
+
+ The rate then increase/decreases. 
+
+ - config.js
+
+ If the timestamp - lastBlock.timestamp > MINE_RATE, decrease the difficulty rate:
+
+ static adjustDifficulty({ lastBlock, timestamp }) {
+    if ((timestamp - lastBlock.blockHeaders.timestamp) > MINE_RATE) {
+      return difficulty -1;
+    }
+  }
+
+10. Validating Blocks - network validation & chain validation
+
+- block.js - validateBlock
+ 
+
 
 

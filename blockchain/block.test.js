@@ -63,7 +63,7 @@ describe('Block', () => {
       ).toEqual(6);
     });
 
-    it('decreses the difficulty for a slowly mined block', () => {
+    it('decreases the difficulty for a slowly mined block', () => {
       expect(
         Block.adjustDifficulty({
           lastBlock: { blockHeaders: { difficulty: 5, timestamp: 1000 } },
