@@ -9,7 +9,13 @@ const GENESIS_DATA = {
   }
 };
 
+const MILLISECONDS = 1;
+const SECONDS = 1000 * MILLISECONDS;
+// Ethereum's blocks are mined around every 13s
+const MINE_RATE = 13 * SECONDS;
+
 module.exports = {
-  GENESIS_DATA
+  GENESIS_DATA,
+  MINE_RATE
 };
 
