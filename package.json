@@ -4,6 +4,9 @@
   "description": "<!-- COMPUCHAIN-->",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon ./api",
+    "dev-peer": "nodemon ./api --peer",
+    "start": "node ./api",
     "test": "jest --watchAll"
   },
   "repository": {
@@ -18,7 +21,12 @@
   },
   "homepage": "https://github.com/vnkbrand/CompuChain#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "jest": "^24.9.0",
-    "js-sha3": "^0.8.0"
+    "js-sha3": "^0.8.0",
+    "pubnub": "^4.25.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
   }
 }

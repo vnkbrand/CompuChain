@@ -359,7 +359,52 @@ npm i js-sha3 --save
 10. Validating Blocks - network validation & chain validation
 
 - block.js - validateBlock
- 
+- Implement a system for validating adding blocks to the chain through the network. The network will validate the block the miner added, as valid.
+
+Ensure the new block followed the POW requirements by:
+      a. The block meets the POW requirement - recalc. the target for the block based on the presented last block. 
+      b. Then we recalc. the underTargetHash, based on the headers from the newly presented block.
+      c. Then we will check that the calculated underTargetHash actually falls under the calculated block's targetHash.
+
+
+# THE BLOCKCHAIN NETWORK
+
+## The network consists of two parts:
+
+### 1. A Private Application and API
+
+This serves as a miner's individual node in the network.
+
+With this API, the miner will be able to act with their own instances of the core data structures in the system. Each miner will have their own instance of the Blockchain class.
+
+The API will be available through HTTP, mainly through POST/GET requests.
+
+- npm i express --save (allows creation of API)
+- create /api/index.js
+
+### 2. Pub/Sub Messaging Layer
+
+This will handle all the messaging in the network, between the nodes.
+
+This will enable nodes to send statuses and transactions to each other. 
+
+Server-to-Server comm through the Publisher/Subscriber pattern.
+
+These are based on messaging channels with Publishers publishing messages and the channel then broadcasts the message.
+
+It is up to the Subscriber to listen to new messages on their subscribed channels.
+
+There can be a plethora of channels and the subscriber can subscribe to as many as they want.
+
+The Publisher is intentional in broadcasting messages to selected channels and this reduces work on the channels.
+
+It fits the model of the nodes broadcasting their specific messages.
+
+#### Structure of Blockchain Channel
+
+The blockchain channel will handle the connections of all the nodes on the network. The node that adds the new block will broadcast this to the channel.
+
+The block data will be contained in the message and all nodes will pick up these specific messages and then update their blockchain instances.
 
 
 
