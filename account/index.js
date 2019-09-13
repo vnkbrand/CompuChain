@@ -12,6 +12,14 @@ class Account {
     return this.keyPair.sign(keccakHash(data));
   }
 
+  // Return safe account data
+  toJSON() {
+    return {
+      address: this.address,
+      balance: this.balance
+    };
+  }
+
   static verifySignature({ publicKey, data, signature }) {
     const keyFromPublic = ec.keyFromPublic(publicKey, 'hex');
 
