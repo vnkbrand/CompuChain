@@ -14,7 +14,7 @@ const CHANNELS_MAP = {
 class PubSub {
   constructor({ blockchain }) {
     this.pubnub = new PubNub(credentials);
-    this.block = blockchain;
+    this.blockchain = blockchain;
     this.subscribeToChannels();
     this.listen();
   }
