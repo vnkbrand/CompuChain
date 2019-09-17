@@ -39,12 +39,44 @@ class Transaction {
       }
     })
   }
+
+  static validateStandardTransaction({ transaction }) {
+    return new Promise((resolve, reject) => {
+      // Ensure signature is valid against address & data
+      const { from, signature } = transaction;
+      const transactionData = { ...transaction };
+      // delete the signature from the above transaction data object, since it is included already
+      delete transactionData.signature;
+
+      // Verify signature
+      // Invalid
+      if (!Account.verifySignature({ publicKey: from, data: transactionData, signature })
+      ) {
+        return reject(new Error(`Transaction: ${id} signature is invalid`));
+      }
+      // Valid
+      return resolve();
+    });
+  }
+
+  static validateCreateAccountTransaction({ transaction }) {
+    return new Promise(( resolve, reject ) => {
+      const expectedAccountDataFields = Object.keys(new Account().toJSON());
+      const fields = Object.keys(transaction.data.accountData);
+      // Check that same amount of fields
+      if (fields.length !== expectedAccountDataFields.length) {
+        return reject(new Error(`The transaction account data has an incorrect number of fields`));
+      }
+      // Check all fields are present within the expected account data fields
+      fields.forEach(field => {
+        if (!expectedAccountDataFields.includes(field)) {
+          return reject(new Error(`The field: ${field}, is unexpected for account data`));
+        }
+      });
+
+      return resolve();
+    });
+  }
 }
 
 module.exports = Transaction;
-
-const account = new Account();
-const transaction = Transaction.createTransaction({
-  account
-});
-console.log('transaction', transaction);

@@ -1,12 +1,26 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const request = require('request');
 const Blockchain = require('../blockchain');
 const Block = require('../blockchain/block');
 const PubSub = require('./pubsub');
+const TransactionQueue = require('../transaction/transaction-queue');
+const Account = require('../account');
+const Transaction = require('../transaction');
 
 const app = express();
+app.use(bodyParser.json());
+
 const blockchain = new Blockchain();
-const pubsub = new PubSub({ blockchain });
+const transactionQueue = new TransactionQueue();
+const pubsub = new PubSub({ blockchain, transactionQueue });
+const account = new Account();
+const transaction = Transaction.createTransaction({ account });
+
+setTimeout(() => {
+  pubsub.broadcastTransaction(transaction);
+}, 500);
+
 
 // Return blockchain of application at current state
 app.get('/blockchain', (req, res, next) => {
@@ -17,9 +31,13 @@ app.get('/blockchain', (req, res, next) => {
 
 app.get('/blockchain/mine', (req, res, next) => {
   const lastBlock = blockchain.chain[blockchain.chain.length-1];
-  const block = Block.mineBlock({ lastBlock });
+  const block = Block.mineBlock({ 
+    lastBlock,
+    beneficiary: account.address,
+    transactionSeries: transactionQueue.getTransactionSeries()
+  });
 
-  blockchain.addBlock({ block })
+  blockchain.addBlock({ block, transactionQueue })
     .then(() => {
       pubsub.broadcastBlock(block);
 
@@ -27,6 +45,20 @@ app.get('/blockchain/mine', (req, res, next) => {
     })
     // Catches error and passes it via 'next' through to app.use() below for error handling
     .catch(next);
+});
+
+// Broadcast transaction to network
+app.post('/account/transact', (req, res, next) => {
+  const { to, value } = req.body;
+  const transaction = Transaction.createTransaction({
+    account: !to ? new Account() : account, 
+    to, 
+    value
+  });
+
+  pubsub.broadcastTransaction(transaction);
+
+  res.json({ transaction });
 });
 
 app.use((err, req, res, next) => {

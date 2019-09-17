@@ -477,11 +477,62 @@ npm i elliptic --save
 3. Create Account Directory and Files
 * And add STARTING_BALANCE for accounts in /config
 
+### Main Functionality for Account Objects
+*In account/index.js
+
+Add 2 methods:
+
+1. Create unqiue signatures for the account
+2. Verify the signatures of other accounts
+
+*Add sign method
+
+### Transactions
+Will serve 2 overall purposed:
+
+1. Exchange currency between accounts which will establish the underlying cryptocurrency.
+2. The state of the network (balances) or new account creations (at first receipt)
+
+The methods and test used are to ensure that correct, non-tampered transactions (data and signatures) are sent.
+
+There are 2 types of transactions:
+
+1. validateStandardTransaction
+2. validateCreateAccountTransaction
+
+#### Transaction-queue.js
+Will serve to add transactions to a queue/pool.
+
+1. Create transaction-queue.js
+2. Add logic and endpoints to api/index.js
+
+#### Sharing transactions in the network
+
+1. Add an endpoints that allows a miner to conduct a transaction with their application account.
+- api/index.js - account/transaction (POST request)
+- create own endpoint tester in root - /api-test.js
+  *This is to test acccount creation & standard transactions
+
+2. Ensure transactions are broadcasted through the pubsub layer
+- All miners are made aware of txn's generated to each node.
+- When receiving a new txn, the miner adds to their own queue. Ensuring all miners have an updated queue.
+
+* Add TRANSACTION channel to pubsub.js
+
+#### Block TransactionSeries
+*Including transactions in blocks.
+
+This will allow new peers to have access to full history of valid txn's
+
+1. Add to blockchain/block.js
+2. Add clearBlockTransactions to ensure transactions are cleared, once mined.
+
+# WORLD STATE AND RUNNING BLOCKS OF TRANSACTIONS
 
 
 
-= address
-- balance
+
+
 
 
 
