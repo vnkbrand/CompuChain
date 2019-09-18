@@ -529,6 +529,83 @@ This will allow new peers to have access to full history of valid txn's
 
 # WORLD STATE AND RUNNING BLOCKS OF TRANSACTIONS
 
+## Trie - reTRIEval
+
+-Ethereum uses Tries under the hood - the Patricia Trie
+- this provides scalability to the Ethereum network to retrieve data.
+
+1. Tries are fast at retrieving and inserting data
+2. Tries can be enhanced with the Root hash. This is all the data that has been stored in the tree (prove using the Root Hash only)
+
+- Add /store to root
+- Add store/trie.js
+
+### Trie Algorithm
+The overall algorithm is based on the characters in the provided key.
+
+#### PUT Method
+1. Makes a starting point for the current node. It always begins with the root node of the trie.
+- Each node has a childMap.
+2. Establishes a starting point for the first character of the key. 
+- It checks if the current node's childMap has the first character stored.
+- If no, then algo creates new child node and stores it under the current node's childMap using the character has the key within the childMap.
+- When the last child node has all the final character, the value within the put method gets attached to the node itself. 
+- This is how the key-value pair gets stored within the trie data structure.
+
+  // Put method stores value in the trie, giving a reference
+
+  put({ key, value }) {
+    let node = this.head;
+
+    for (let character of key) {
+      if (!node.childMap[character]) {
+        node.childMap[character] = new Node();
+      }
+
+      node = node.childMap[character];
+    }
+
+    node.value = value;
+  }
+
+#### GET Method
+* Similar as above
+- Checks for children in the structure, based on the char's in the given key.
+- HOWEVER, it does not create child nodes (only PUT method does this)
+
+* The GET method only returns a value that it finds at the end of the key string (if it makes it there).
+
+  // Retrieve value from tire, using the reference (key)
+
+  get({ key }) {
+    let node = this.head;
+
+    for (let character of key) {
+      if (node.childMap[character]) {
+        node = node.childMap[character];
+      }
+    }
+
+    return node.value;
+  }
+
+
+
+
+
+## State Object
+- Needs to handle standard transactions and account creation transactions
+- Ensure every miner in the network manages and shares the current, correct state. Defined the same blocks of transactions, through the overall blockchain.
+
+## Transaction Series Validations
+- Add more validation around transaction series to ensure correct format
+
+## Mining Reward for adding blocks
+- These transactions will specify a reward for miners
+
+
+
+
 
 
 

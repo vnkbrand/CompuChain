@@ -26,25 +26,26 @@ const getMine = () => {
   });
 }
 
+  let toAccountData;
+
   postTransact({})
   .then(postTransactResponse => {
     console.log(
       'postTransactResponse (Create Account Transaction)',
-      postTransactResponse 
+      postTransactResponse
     );
 
-    const toAccountData = postTransactResponse.transaction.data.accountData;
+    toAccountData = postTransactResponse.transaction.data.accountData;
 
-  return postTransact({ to: 'foo-recipient', value: 20 });
-})
-  .then (postTransactResponse2 => {
+    return getMine();
+  }).then(getMineResponse => {
+    console.log('getMineResponse', getMineResponse);
+
+    return postTransact({ to: toAccountData.address, value: 20 });
+  })
+  .then(postTransactResponse2 => {
     console.log(
       'postTransactResponse2 (Standard Transaction)',
-      postTransactResponse2 
+      postTransactResponse2
     );
-    
-    return getMine();
-  })
-  .then(getMineResponse => {
-    console.log('getMineResponse', getMineResponse);
   });
