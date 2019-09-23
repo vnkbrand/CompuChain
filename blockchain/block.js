@@ -1,6 +1,7 @@
 const { GENESIS_DATA, MINE_RATE } = require('../config');
 const { keccakHash } = require('../util');
 const Transaction = require('../transaction');
+const Trie = require('../store/trie');
 
 const HASH_LENGTH = 64;
 const MAX_HASH_VALUE = parseInt('f'.repeat(HASH_LENGTH), 16);
@@ -42,6 +43,7 @@ class Block {
     stateRoot 
   }) {
     const target = Block.calculateBlockTargetHash({ lastBlock });
+    const transactionsTrie = Trie.buildTrie({ items: transactionSeries });
     let timestamp, truncatedBlockHeaders, header, nonce, underTargetHash;
 
     do {
@@ -51,9 +53,8 @@ class Block {
         beneficiary,
         difficulty: Block.adjustDifficulty({ lastBlock, timestamp }),
         number: lastBlock.blockHeaders.number + 1,
-        timestamp,
-        // The transactionRoot will be refactored once Tries are implemented
-        transactionsRoot: keccakHash(transactionSeries),
+        timestamp,  
+        transactionsRoot: transactionsTrie.rootHash,
         stateRoot
       };
       header = keccakHash(truncatedBlockHeaders);
@@ -76,7 +77,7 @@ class Block {
     return new this(GENESIS_DATA);
   }
 
-  static validateBlock({ lastBlock, block }) {
+  static validateBlock({ lastBlock, block, state }) {
     return new Promise((resolve, reject) => {
       // Check the genesis block is valid
       if (keccakHash(block) === keccakHash(Block.genesis())) {
@@ -96,8 +97,21 @@ class Block {
         return reject(new Error('The difficulty must only adjust by 1'));
       }
 
+      const rebuildTransactionsTrie = Trie.buildTrie({ 
+        items: block.transactionSeries
+      });
+
+      if (rebuildTransactionsTrie.rootHash !== block.blockHeaders.transactionsRoot) {
+        return reject(
+          new Error(
+            `The rebuilt transactions root does not match the block's` +
+            `transactions root: ${block.blockHeaders.transactionsRoot}`
+          )
+        );
+      }
+
       // The block meets the POW requirement - recalc. the target for the block based on the presented last block. 
-      // Then we recalc. the underTargetHash, based on the headers from the newly presented block.
+      // Then we recalculate the underTargetHash, based on the headers from the newly presented block.
       // Then we will check that the calculated underTargetHash actually falls under the calculated block's targetHash.
 
       // minedBlock produces an underTargetHashValue that falls below the block target hash
@@ -117,9 +131,13 @@ class Block {
         ));
       }
 
-      return resolve();
+      Transaction.validateTransactionSeries({
+        state, transactionSeries: block.transactionSeries
+      }).then(resolve)
+        .catch(reject);
     });
   }
+
   // The method in the block class called runBlock. This takes an object with the block field and state field.
   static runBlock({ block, state }) {
     for (let transaction of block.transactionSeries) {
