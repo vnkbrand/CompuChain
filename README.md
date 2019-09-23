@@ -600,12 +600,29 @@ The overall algorithm is based on the characters in the provided key.
 ## Transaction Series Validations
 - Add more validation around transaction series to ensure correct format
 
+### Run Blocks and Transactions
+1. runStandardTransaction method (transaction/index.js)
+- This method is to first get the account data that is stored for both account relevant to th txn (to and from accounts)
+- Then use the value in the txn to update balances of both accounts.
+- The account data is placed back into the State to save the standardTransaction.
+
+
 ## Mining Reward for adding blocks
 - These transactions will specify a reward for miners
 
 
+## Get Balance and World State
 
+1. Get balance of an account
+- Create endpoint: 
+- api/index.js - app.get account/balance
 
+2. Methods to run txn's and apply changes in the state
+- add calculateBalance method to account/index.js
+
+- Calculating ANY account: 
+  api/index.js -> allow a user to provide an address though a req query parameter
+  
 
 
 

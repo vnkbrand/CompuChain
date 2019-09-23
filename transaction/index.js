@@ -40,10 +40,10 @@ class Transaction {
     })
   }
 
-  static validateStandardTransaction({ transaction }) {
+  static validateStandardTransaction({ state, transaction }) {
     return new Promise((resolve, reject) => {
       // Ensure signature is valid against address & data
-      const { from, signature } = transaction;
+      const { from, signature, value, to } = transaction;
       const transactionData = { ...transaction };
       // delete the signature from the above transaction data object, since it is included already
       delete transactionData.signature;
@@ -53,6 +53,22 @@ class Transaction {
       if (!Account.verifySignature({ publicKey: from, data: transactionData, signature })
       ) {
         return reject(new Error(`Transaction: ${id} signature is invalid`));
+      }
+      // Ensure from Account balance is enough for txn
+      const fromBalance = state.getAccount({ address: from }).balance;
+
+      if (value > fromBalance) {
+        return reject(new Error(
+          `Transaction value: ${value} exceeds balance: ${fromBalance}`
+        ));
+      }
+      // Check if toAccount is defined/valid
+      const toAccount = state.getAccount({ address: to });
+
+      if (!toAccount) {
+        return reject(new Error(
+          `The to field: ${to} does not exist`
+        ));
       }
       // Valid
       return resolve();
@@ -74,6 +90,31 @@ class Transaction {
         }
       });
 
+      return resolve();
+    });
+  }
+
+  static validateTransactionSeries({ transactionSeries, state }) {
+    return new Promise(async (resolve, reject) => {
+      for (let transaction of transactionSeries) {
+        try {
+          switch (transaction.data.type) {
+            case TRANSACTION_TYPE_MAP.CREATE_ACCOUNT:
+              await Transaction.validateCreateAccountTransaction({ transaction });
+              break;
+            case TRANSACTION_TYPE_MAP.TRANSACT:
+              await Transaction.validateStandardTransaction({ 
+                state,
+                transaction 
+              });
+              break;
+            default:
+              break;
+        }
+        } catch (error) {
+          return reject(error);
+        }
+      }
       return resolve();
     });
   }
