@@ -52,9 +52,10 @@ app.get('/blockchain/mine', (req, res, next) => {
 
 // Broadcast transaction to network
 app.post('/account/transact', (req, res, next) => {
-  const { to, value } = req.body;
+  const { code, gasLimit, to, value } = req.body;
   const transaction = Transaction.createTransaction({
-    account: !to ? new Account() : account, 
+    account: !to ? new Account({ code }) : account,
+    gasLimit, 
     to, 
     value
   });
